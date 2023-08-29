@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>shoppingC</title>
+    <style>
+        * {
+            line-height: 2;
+            box-sizing: border-box;
+        }
+
+        .wrap {
+            margin: 0 auto;
+            width: 1200px;
+        }
+
+        .title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .overAll {
+            margin: 10px;
+        }
+
+        .grid {
+            display: flex;
+            flex-wrap: wrap;
+
+        }
+
+        .card {
+            width: 250px;
+            margin: 10px;
+            padding: 5px;
+            border: 1px solid black;
+            text-align: center;
+            justify-content: space-between;
+        }
+
+        .card * {
+            margin-bottom: 10px;
+        }
+
+        img {
+            width: 20%;
+        }
+
+        .count * {
+            margin: 10px;
+        }
+
+        .countBox {
+            width: 30px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <div id="app">
+            <div class="cart">
+                <div class="title">
+                    <h1>購物車</h1>
+                    <div class="overAll">
+                        <div>{{ cartItemCount }} item</div>
+                        <div>總價:${{ cartTotalPrice }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="grid">
+                <div v-for="(prod, index) in products" :key="prod.id">
+                    <div v-if="prod.inCart" class="card">
+                        <img :src="prod.pic" alt="">
+                        <div>{{prod.title}}</div>
+                        <div class="count">
+                            <div>${{prod.price}}/per</div>
+                            <div>total:${{ prod.count * prod.price }}</div>
+                            <button @click="decreaseQty(index)">-</button>
+                            <input type="text" v-model="prod.count" class="countBox" readonly="readonly"
+                                @input="minValue(index)">
+                            <button @click="increaseQty(index)">+</button>
+                        </div>
+                        <button @click="removeFromCart(index)">移除</button>
+                    </div>
+                </div>
+            </div>
+            <div class="listOfp" v-for="(prod, index) in products" :key="prod.id">
+                <div>{{prod.title}}</div>
+                
+            </div>
+        </div>
+
+
+
+    </div>
+    <script src="https://unpkg.com/vue@next"></script>
+    <script>
+        Vue.createApp({
+            data() {
+                return {
+                    products: [{
+                        pic: './img/CasualSlimFit.jpg',
+                        title: 'Mens Casual Premium Slim Fit T-Shirts',
+                        price: 223,
+                        count: 1,
+                        inCart: true
+                    },
+                    {
+                        pic: './img/Fjallraven.jpg',
+                        title: 'Fjallraven - Foldsack No. 1 Backpack',
+                        price: 1095,
+                        count: 1,
+                        inCart: true
+                    },
+                    {
+                        pic: './img/SlimFit.jpg',
+                        title: 'Mens Casual Slim Fit',
+                        price: 1599,
+                        count: 1,
+                        inCart: true
+                    },
+                    {
+                        pic: './img/WD2TB.jpg',
+                        title: 'WD 4TB Gaming Drive',
+                        price: 1099,
+                        count: 1,
+                        inCart: true
+                    }
+                    ],
+                    qty: 0
+
+                }
+            },
+            computed: {
+                cartItemCount() {
+                    return this.products.filter(prod => prod.inCart).length;
+                },
+                cartTotalPrice() {
+                    return this.products.reduce((total, prod) => {
+                        if (prod.inCart) {
+                            return total + prod.count * prod.price;
+                        }
+                        return total;
+                    }, 0);
+                }
+
+            },
+            methods: {
+                minValue() {
+                    if (this.value < 0) {
+                        this.value = 0;
+                    }
+                },
+                decreaseQty(index) {
+                    if (this.products[index].count > 0) {
+                        this.products[index].count--;
+                    }
+                },
+                increaseQty(index) {
+                    this.products[index].count++;
+                },
+                removeFromCart(index) {
+                    this.products[index].inCart = false;
+                }
+            },
+            mounted() {
+
+            }
+        }).mount("#app");
+    </script>
+</body>
+
+</html>
